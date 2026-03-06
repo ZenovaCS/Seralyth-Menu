@@ -193,6 +193,6 @@ namespace Seralyth.Extensions
             rig.GetSpeed()[1];
 
         public static string Cosmetics(this VRRig rig) =>
-            string.Concat(rig._playerOwnedCosmetics);
+            rig._playerOwnedCosmetics.Concat();
     }
 }
