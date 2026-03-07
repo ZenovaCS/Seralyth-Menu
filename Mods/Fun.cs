@@ -1912,7 +1912,7 @@ namespace Seralyth.Mods
                 buffer.Clear();
         }
 
-        public static void SetMicrophoneQuality(int bitrate, int samplingRate)
+        public static void SetMicrophoneSamplingRate(int bitrate, int samplingRate)
         {
             if (!PhotonNetwork.InRoom)
                 return;
@@ -1938,7 +1938,7 @@ namespace Seralyth.Mods
                 CoroutineManager.instance.StartCoroutine(DelayReloadMicrophone());
             }      
         }
-
+        
         public static void SetMicrophoneAmplification(bool amplify)
         {
             if (!PhotonNetwork.InRoom)
@@ -1975,6 +1975,19 @@ namespace Seralyth.Mods
                 CoroutineManager.instance.StartCoroutine(DelayReloadMicrophone());
             }
                 
+        }
+
+        public static void SetMicrophoneBitrate(int bitrate, bool changeDefault = true)
+        {
+            if (!GorillaTagger.Instance.myRecorder)
+                return;
+            if (NetworkSystem.Instance.VoiceSettings.Bitrate != bitrate && changeDefault)
+                NetworkSystem.Instance.VoiceSettings.Bitrate = bitrate;
+            if (GorillaTagger.Instance.myRecorder.IsInitialized && GorillaTagger.Instance.myRecorder.Bitrate != bitrate)
+            {
+                GorillaTagger.Instance.myRecorder.Bitrate = bitrate;
+                GorillaTagger.Instance.myRecorder.RestartRecording();
+            }
         }
 
         public static void EchoMicrophone(bool status)
