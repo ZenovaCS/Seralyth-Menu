@@ -55,6 +55,7 @@ namespace Seralyth.Managers
             public float Position;
             public float Step;
             public bool MuteMicrophone;
+            public float Gain = 1f;
         }
 
         private readonly List<Clip> audioClips = new List<Clip>();
@@ -70,7 +71,7 @@ namespace Seralyth.Managers
         /// <summary>
         /// A read-only list of AudioClips currently playing
         /// </summary>
-        public IReadOnlyList<Clip> AudioClips => audioClips.AsReadOnly();
+        public IReadOnlyList<Clip> AudioClips => audioClips;
 
         /// <summary>
         /// Gets or sets the microphone's recording status. This does not stop the pushed AudioClip from playing.
@@ -410,13 +411,13 @@ namespace Seralyth.Managers
                 int nextIndex = index + 1;
                 if (nextIndex >= clip.Samples.Length)
                 {
-                    mixed += clip.Samples[index];
+                    mixed += clip.Samples[index] * clip.Gain;
                     audioClips.RemoveAt(i);
                     continue;
                 }
 
                 float frac = clip.Position - index;
-                mixed += Mathf.Lerp(clip.Samples[index], clip.Samples[nextIndex], frac);
+                mixed += Mathf.Lerp(clip.Samples[index], clip.Samples[nextIndex], frac) * clip.Gain;
 
                 clip.Position += clip.Step;
             }
