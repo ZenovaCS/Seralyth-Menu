@@ -58,7 +58,7 @@ namespace Seralyth.Managers
             public Guid Id { get; set; }
             public AudioClip Source { get; set; }
             public float[] Samples;
-            public int Channels; // Added to track if the clip is mono or stereo
+            public int Channels;
             public float Position;
             public float Step;
             public bool MuteMicrophone;
