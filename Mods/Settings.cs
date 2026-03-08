@@ -639,6 +639,13 @@ namespace Seralyth.Mods
                     {
                         new ButtonInfo
                         {
+                            buttonText = $"Check {player.NickName}'s Mods",
+                            method = () => ModChecker(player),
+                            isTogglable = false,
+                            toolTip = $"View all of \"{player.NickName}\"'s mods."
+                        },
+                        new ButtonInfo
+                        {
                             buttonText = "Player Name",
                             overlapText = $"Name: {player.NickName}",
                             method = () => ChangeName(player.NickName),

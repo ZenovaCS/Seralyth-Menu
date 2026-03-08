@@ -2503,7 +2503,7 @@ namespace Seralyth.Mods
                         {
                             string specialMods = null;
                             Dictionary<string, object> customProps = new Dictionary<string, object>();
-                            foreach (DictionaryEntry dictionaryEntry in NetPlayerToPlayer(GetPlayerFromVRRig(vrrig)).CustomProperties)
+                            foreach (DictionaryEntry dictionaryEntry in vrrig.GetPhotonPlayer().CustomProperties)
                                 customProps[dictionaryEntry.Key.ToString().ToLower()] = dictionaryEntry.Value;
 
                             foreach (var mod in modDictionary.Where(mod => customProps.ContainsKey(mod.Key.ToLower())))

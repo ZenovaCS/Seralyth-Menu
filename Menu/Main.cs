@@ -5851,6 +5851,41 @@ namespace Seralyth.Menu
 
             CreateReference();
         }
+        
+        public static void ModChecker(NetPlayer player)
+        {
+            Dictionary<string, object> customProps = new Dictionary<string, object>();
+            foreach (DictionaryEntry dictionaryEntry in player.GetCustomProperties())
+                customProps[dictionaryEntry.Key.ToString().ToLower()] = dictionaryEntry.Value;
+            List<ButtonInfo> buttons = new List<ButtonInfo>
+            {
+                new ButtonInfo
+                {
+                    buttonText = "Exit Mod Checker",
+                    method =() => Settings.NavigatePlayer(player),
+                    isTogglable = false
+                }
+            };
+            var mods = Visuals.modDictionary
+               .Where(mod => customProps.ContainsKey(mod.Key.ToLower()))
+               .Select((mod, index) => new ButtonInfo
+               {
+                   buttonText = $"Mod{index}",
+                   overlapText = mod.Value,
+                   label = true
+               });
+            if (mods.Any())
+                buttons.AddRange(mods);
+            else
+                buttons.Add(new ButtonInfo
+                {
+                    buttonText = "No mods detected",
+                    label = true
+                });
+
+            Buttons.buttons[Buttons.GetCategory("Temporary Category")] = buttons.ToArray();
+            Buttons.CurrentCategoryName = "Temporary Category";
+        }
 
         public static void ChangeName(string PlayerName, bool noColor = false)
         {
