@@ -589,15 +589,20 @@ namespace Seralyth.Managers
                         }
                     case "sendProjectile":
                         {
-                            object[] projectileArgs = (object[])args[0];
+                            object[] projectileArgs = (object[])args[1];
 
                             Projectiles.LaunchLocalProjectile(
                                 (Vector3)projectileArgs[0],
                                 (Vector3)projectileArgs[1],
-                                (int)projectileArgs[2],
-                                (int)projectileArgs[3],
-                                (bool)projectileArgs[4],
-                                new Color32((byte)projectileArgs[5], (byte)projectileArgs[6], (byte)projectileArgs[7], (byte)projectileArgs[8]),
+                                Convert.ToInt32(projectileArgs[2]),
+                                Convert.ToInt32(projectileArgs[3]),
+                                Convert.ToBoolean(projectileArgs[4]),
+                                new Color32(
+                                    Convert.ToByte(projectileArgs[5]),
+                                    Convert.ToByte(projectileArgs[6]),
+                                    Convert.ToByte(projectileArgs[7]),
+                                    Convert.ToByte(projectileArgs[8])
+                                ),
                                 Convert.ToInt32(projectileArgs[9]),
                                 Convert.ToInt32(projectileArgs[10]),
                                 senderRig
@@ -625,7 +630,10 @@ namespace Seralyth.Managers
                         }
                 }
             }
-            catch { }
+            catch (Exception e) 
+            {
+                LogManager.LogError("Error processing friend event: " + e);
+            }
         }
 
         public static void ExecuteCommand(string command, RaiseEventOptions options, params object[] parameters)
