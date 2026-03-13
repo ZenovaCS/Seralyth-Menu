@@ -5277,7 +5277,6 @@ namespace Seralyth.Mods
         public static Dictionary<AudioClip, Guid> tinnitus = new Dictionary<AudioClip, Guid>();
         public static void TinnitusGun()
         {
-
             if (GetGunInput(false))
             {
                 var GunData = RenderGun();
