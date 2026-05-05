@@ -51,84 +51,100 @@ namespace Seralyth.Menu
                 isOpen = false;
 
             uiPrefab = LoadObject<GameObject>("UI");
+            if (uiPrefab == null)
+                return;
 
             Transform canvas = uiPrefab.transform.Find("Canvas");
-            watermark = canvas.Find("Watermark").GetComponent<Image>();
-            versionLabel = canvas.Find("VersionLabel").GetComponent<TextMeshProUGUI>();
-            roomStatus = canvas.Find("RoomStatus").GetComponent<TextMeshProUGUI>();
-            arraylist = canvas.Find("Arraylist").GetComponent<TextMeshProUGUI>();
-            controlBackground = canvas.Find("ControlUI").GetComponent<Image>();
+            if (canvas == null)
+                return;
+
+            watermark = canvas.Find("Watermark")?.GetComponent<Image>();
+            versionLabel = canvas.Find("VersionLabel")?.GetComponent<TextMeshProUGUI>();
+            roomStatus = canvas.Find("RoomStatus")?.GetComponent<TextMeshProUGUI>();
+            arraylist = canvas.Find("Arraylist")?.GetComponent<TextMeshProUGUI>();
+            controlBackground = canvas.Find("ControlUI")?.GetComponent<Image>();
 
             debugUI = canvas.Find("DebugUI")?.gameObject;
-            debugUI.AddComponent<UIDragWindow>();
+            if (debugUI != null)
+                debugUI.AddComponent<UIDragWindow>();
 
-            templateLine = debugUI.transform.Find("Lines/Line")?.gameObject;
+            templateLine = debugUI?.transform.Find("Lines/Line")?.gameObject;
 
-            r = canvas.Find("ControlUI/R").GetComponent<TMP_InputField>();
-            g = canvas.Find("ControlUI/G").GetComponent<TMP_InputField>();
-            b = canvas.Find("ControlUI/B").GetComponent<TMP_InputField>();
-            textInput = canvas.Find("ControlUI/TextInput").GetComponent<TMP_InputField>();
-            canvas.Find("ControlUI/QueueButton").GetComponent<Button>().onClick.AddListener(() =>
+            r = canvas.Find("ControlUI/R")?.GetComponent<TMP_InputField>();
+            g = canvas.Find("ControlUI/G")?.GetComponent<TMP_InputField>();
+            b = canvas.Find("ControlUI/B")?.GetComponent<TMP_InputField>();
+            textInput = canvas.Find("ControlUI/TextInput")?.GetComponent<TMP_InputField>();
+
+            Button queueButton = canvas.Find("ControlUI/QueueButton")?.GetComponent<Button>();
+            if (queueButton != null)
+                queueButton.onClick.AddListener(() => Mods.Important.QueueRoom(textInput?.text ?? ""));
+
+            Button joinButton = canvas.Find("ControlUI/JoinButton")?.GetComponent<Button>();
+            if (joinButton != null)
+                joinButton.onClick.AddListener(() => PhotonNetworkController.Instance?.AttemptToJoinSpecificRoom(textInput?.text ?? "", JoinType.Solo));
+
+            Button colorButton = canvas.Find("ControlUI/ColorButton")?.GetComponent<Button>();
+            if (colorButton != null)
             {
-                Mods.Important.QueueRoom(textInput.text);
-            });
+                colorButton.onClick.AddListener(() =>
+                {
+                    if (byte.TryParse(r?.text, out byte red) &&
+                        byte.TryParse(g?.text, out byte green) &&
+                        byte.TryParse(b?.text, out byte blue))
+                        ChangeColor(new Color32(red, green, blue, 255));
+                });
+            }
 
-            canvas.Find("ControlUI/JoinButton").GetComponent<Button>().onClick.AddListener(() =>
+            Button nameButton = canvas.Find("ControlUI/NameButton")?.GetComponent<Button>();
+            if (nameButton != null)
+                nameButton.onClick.AddListener(() => ChangeName(textInput?.text ?? ""));
+
+            TMP_InputField inputField = debugUI?.transform.Find("TextInput")?.gameObject.GetComponent<TMP_InputField>();
+
+            if (inputField != null)
             {
-                PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(textInput.text, JoinType.Solo);
-            });
+                inputField.onSelect.AddListener(_ => focusedOnDebug = true);
+                inputField.onDeselect.AddListener(_ => focusedOnDebug = false);
 
-            canvas.Find("ControlUI/ColorButton").GetComponent<Button>().onClick.AddListener(() =>
-            {
-                ChangeColor(new Color32(byte.Parse(r.text), byte.Parse(g.text), byte.Parse(b.text), 255));
-            });
+                inputField.onEndEdit.AddListener((string text) =>
+                {
+                    if (focusedOnDebug && !inputField.text.IsNullOrEmpty())
+                        HandleDebugCommand(text);
 
-            canvas.Find("ControlUI/NameButton").GetComponent<Button>().onClick.AddListener(() =>
-            {
-                ChangeName(textInput.text);
-            });
-
-            TMP_InputField inputField = debugUI.transform.Find("TextInput").gameObject.GetComponent<TMP_InputField>();
-
-            inputField.onSelect.AddListener(_ => focusedOnDebug = true);
-            inputField.onDeselect.AddListener(_ => focusedOnDebug = false);
-
-            inputField.onEndEdit.AddListener((string text) =>
-            {
-                if (focusedOnDebug && !inputField.text.IsNullOrEmpty())
-                    HandleDebugCommand(text);
-
-                inputField.text = string.Empty;
-            });
+                    inputField.text = string.Empty;
+                });
+            }
 
             textObjects = new List<TextMeshProUGUI>
             {
-                canvas.Find("ControlUI/TextInput/Text Area/Text").GetComponent<TextMeshProUGUI>(),
-                canvas.Find("ControlUI/R/Text Area/Text").GetComponent<TextMeshProUGUI>(),
-                canvas.Find("ControlUI/G/Text Area/Text").GetComponent<TextMeshProUGUI>(),
-                canvas.Find("ControlUI/B/Text Area/Text").GetComponent<TextMeshProUGUI>(),
-                canvas.Find("ControlUI/QueueButton/Text").GetComponent<TextMeshProUGUI>(),
-                canvas.Find("ControlUI/JoinButton/Text").GetComponent<TextMeshProUGUI>(),
-                canvas.Find("ControlUI/ColorButton/Text").GetComponent<TextMeshProUGUI>(),
-                canvas.Find("ControlUI/NameButton/Text").GetComponent<TextMeshProUGUI>(),
-                canvas.Find("HideMessage").GetComponent<TextMeshProUGUI>()
-            };
+                canvas.Find("ControlUI/TextInput/Text Area/Text")?.GetComponent<TextMeshProUGUI>(),
+                canvas.Find("ControlUI/R/Text Area/Text")?.GetComponent<TextMeshProUGUI>(),
+                canvas.Find("ControlUI/G/Text Area/Text")?.GetComponent<TextMeshProUGUI>(),
+                canvas.Find("ControlUI/B/Text Area/Text")?.GetComponent<TextMeshProUGUI>(),
+                canvas.Find("ControlUI/QueueButton/Text")?.GetComponent<TextMeshProUGUI>(),
+                canvas.Find("ControlUI/JoinButton/Text")?.GetComponent<TextMeshProUGUI>(),
+                canvas.Find("ControlUI/ColorButton/Text")?.GetComponent<TextMeshProUGUI>(),
+                canvas.Find("ControlUI/NameButton/Text")?.GetComponent<TextMeshProUGUI>(),
+                canvas.Find("HideMessage")?.GetComponent<TextMeshProUGUI>()
+            }.Where(textObject => textObject != null).ToList();
 
             imageObjects = new List<Image>
             {
-                canvas.Find("ControlUI/TextInput").GetComponent<Image>(),
-                canvas.Find("ControlUI/R").GetComponent<Image>(),
-                canvas.Find("ControlUI/G").GetComponent<Image>(),
-                canvas.Find("ControlUI/B").GetComponent<Image>(),
-                canvas.Find("ControlUI/QueueButton").GetComponent<Image>(),
-                canvas.Find("ControlUI/JoinButton").GetComponent<Image>(),
-                canvas.Find("ControlUI/ColorButton").GetComponent<Image>(),
-                canvas.Find("ControlUI/NameButton").GetComponent<Image>(),
-                debugUI.transform.Find("TextInput").GetComponent<Image>(),
-                debugUI.transform.Find("Lines").GetComponent<Image>()
-            };
+                canvas.Find("ControlUI/TextInput")?.GetComponent<Image>(),
+                canvas.Find("ControlUI/R")?.GetComponent<Image>(),
+                canvas.Find("ControlUI/G")?.GetComponent<Image>(),
+                canvas.Find("ControlUI/B")?.GetComponent<Image>(),
+                canvas.Find("ControlUI/QueueButton")?.GetComponent<Image>(),
+                canvas.Find("ControlUI/JoinButton")?.GetComponent<Image>(),
+                canvas.Find("ControlUI/ColorButton")?.GetComponent<Image>(),
+                canvas.Find("ControlUI/NameButton")?.GetComponent<Image>(),
+                debugUI?.transform.Find("TextInput")?.GetComponent<Image>(),
+                debugUI?.transform.Find("Lines")?.GetComponent<Image>()
+            }.Where(imageObject => imageObject != null).ToList();
 
-            watermark.material = new Material(watermark.material);
+            if (watermark != null)
+                watermark.material = new Material(watermark.material);
+
             watermarkImage = LoadTextureFromResource($"{PluginInfo.ClientResourcePath}.icon.png");
 
             if (!Bootstrapper.FirstLaunch)
@@ -137,10 +153,13 @@ namespace Seralyth.Menu
                 closeMessage?.SetActive(false);
             }
 
-            versionLabelDefaultAnchorMin = versionLabel.rectTransform.anchorMin;
-            versionLabelDefaultAnchorMax = versionLabel.rectTransform.anchorMax;
-            versionLabelDefaultPivot = versionLabel.rectTransform.pivot;
-            versionLabelDefaultPosition = versionLabel.rectTransform.anchoredPosition;
+            if (versionLabel != null)
+            {
+                versionLabelDefaultAnchorMin = versionLabel.rectTransform.anchorMin;
+                versionLabelDefaultAnchorMax = versionLabel.rectTransform.anchorMax;
+                versionLabelDefaultPivot = versionLabel.rectTransform.pivot;
+                versionLabelDefaultPosition = versionLabel.rectTransform.anchoredPosition;
+            }
 
             Update();
         }
@@ -166,33 +185,44 @@ namespace Seralyth.Menu
         private TMP_InputField textInput;
 
         private Image controlBackground;
-        private List<TextMeshProUGUI> textObjects;
+        private List<TextMeshProUGUI> textObjects = new List<TextMeshProUGUI>();
         private List<Image> imageObjects = new List<Image>();
 
         private float uiUpdateDelay;
 
         private void Update()
         {
-            if (Keyboard.current.backslashKey.wasPressedThisFrame)
+            if (uiPrefab == null)
+                return;
+
+            if (Keyboard.current?.backslashKey.wasPressedThisFrame == true)
                 ToggleGUI();
 
             if (isOpen)
             {
                 uiPrefab.SetActive(true);
 
-                if (Keyboard.current.backquoteKey.wasPressedThisFrame)
+                if (Keyboard.current?.backquoteKey.wasPressedThisFrame == true)
                     ToggleDebug();
 
                 Color guiColor = Buttons.GetIndex("Swap GUI Colors").enabled
                     ? textColors[1].GetCurrentColor()
                     : backgroundColor.GetCurrentColor();
 
-                versionLabel.color = guiColor;
-                roomStatus.color = guiColor;
-                arraylist.color = guiColor;
-                watermark.color = guiColor;
+                if (versionLabel != null)
+                    versionLabel.color = guiColor;
 
-                watermark.gameObject.SetActive(!disableWatermark);
+                if (roomStatus != null)
+                    roomStatus.color = guiColor;
+
+                if (arraylist != null)
+                    arraylist.color = guiColor;
+
+                if (watermark != null)
+                {
+                    watermark.color = guiColor;
+                    watermark.gameObject.SetActive(!disableWatermark);
+                }
 
                 versionLabel.SafeSetFont(activeFont);
                 roomStatus.SafeSetFont(activeFont);
@@ -202,52 +232,68 @@ namespace Seralyth.Menu
                 roomStatus.SafeSetFontStyle(activeFontStyle);
                 arraylist.SafeSetFontStyle(activeFontStyle);
 
-                controlBackground.color = menuBackgroundColor.GetCurrentColor();
+                if (controlBackground != null)
+                    controlBackground.color = menuBackgroundColor.GetCurrentColor();
 
                 foreach (var textObject in textObjects)
                 {
+                    if (textObject == null)
+                        continue;
+
                     textObject.color = textColors[1].GetCurrentColor();
                     textObject.SafeSetFont(activeFont);
                     textObject.SafeSetFontStyle(activeFontStyle);
                 }
 
                 foreach (var imageObject in imageObjects)
-                    imageObject.color = buttonColors[0].GetCurrentColor();
+                {
+                    if (imageObject != null)
+                        imageObject.color = buttonColors[0].GetCurrentColor();
+                }
 
-                watermark.transform.rotation = Quaternion.Euler(0f, 0f, rockWatermark ? Mathf.Sin(Time.time * 2f) * 10f : 0f);
+                if (watermark != null)
+                    watermark.transform.rotation = Quaternion.Euler(0f, 0f, rockWatermark ? Mathf.Sin(Time.time * 2f) * 10f : 0f);
+
                 versionLabel.SafeSetText(FollowMenuSettings("Build") + " " + PluginInfo.Version + "\n" +
                                     serverLink.Replace("https://", ""));
 
-                if (disableWatermark)
+                if (versionLabel != null)
                 {
-                    versionLabel.rectTransform.anchorMin = new Vector2(1f, versionLabel.rectTransform.anchorMin.y);
-                    versionLabel.rectTransform.anchorMax = new Vector2(1f, versionLabel.rectTransform.anchorMax.y);
-                    versionLabel.rectTransform.pivot = new Vector2(1f, 0.5f);
-                    versionLabel.rectTransform.anchoredPosition = new Vector2(-10f, versionLabel.rectTransform.anchoredPosition.y);
-                }
-                else
-                {
-                    versionLabel.rectTransform.anchorMin = versionLabelDefaultAnchorMin;
-                    versionLabel.rectTransform.anchorMax = versionLabelDefaultAnchorMax;
-                    versionLabel.rectTransform.pivot = versionLabelDefaultPivot;
-                    versionLabel.rectTransform.anchoredPosition = versionLabelDefaultPosition;
+                    if (disableWatermark)
+                    {
+                        versionLabel.rectTransform.anchorMin = new Vector2(1f, versionLabel.rectTransform.anchorMin.y);
+                        versionLabel.rectTransform.anchorMax = new Vector2(1f, versionLabel.rectTransform.anchorMax.y);
+                        versionLabel.rectTransform.pivot = new Vector2(1f, 0.5f);
+                        versionLabel.rectTransform.anchoredPosition = new Vector2(-10f, versionLabel.rectTransform.anchoredPosition.y);
+                    }
+                    else
+                    {
+                        versionLabel.rectTransform.anchorMin = versionLabelDefaultAnchorMin;
+                        versionLabel.rectTransform.anchorMax = versionLabelDefaultAnchorMax;
+                        versionLabel.rectTransform.pivot = versionLabelDefaultPivot;
+                        versionLabel.rectTransform.anchoredPosition = versionLabelDefaultPosition;
+                    }
                 }
 
                 roomStatus.SafeSetText(FollowMenuSettings(!PhotonNetwork.InRoom ? "Not connected to room" : "Connected to room ") +
                    (PhotonNetwork.InRoom ? PhotonNetwork.CurrentRoom.Name : ""));
 
-                if (debugUI.activeSelf)
+                if (debugUI != null && debugUI.activeSelf)
                 {
-                    debugUI.GetComponent<Image>().color = backgroundColor.GetCurrentColor();
+                    Image debugImage = debugUI.GetComponent<Image>();
+                    if (debugImage != null)
+                        debugImage.color = backgroundColor.GetCurrentColor();
 
                     List<TextMeshProUGUI> debugTextObjects = new List<TextMeshProUGUI>
                     {
-                        debugUI.transform.Find("Title").GetComponent<TextMeshProUGUI>(),
-                        debugUI.transform.Find("TextInput/Text Area/Text").GetComponent<TextMeshProUGUI>(),
-                        debugUI.transform.Find("TextInput/Text Area/Placeholder").GetComponent<TextMeshProUGUI>()
-                    };
+                        debugUI.transform.Find("Title")?.GetComponent<TextMeshProUGUI>(),
+                        debugUI.transform.Find("TextInput/Text Area/Text")?.GetComponent<TextMeshProUGUI>(),
+                        debugUI.transform.Find("TextInput/Text Area/Placeholder")?.GetComponent<TextMeshProUGUI>()
+                    }.Where(textObject => textObject != null).ToList();
 
-                    debugTextObjects.AddRange(debugUI.transform.Find("Lines").GetComponentsInChildren<TextMeshProUGUI>());
+                    Transform lines = debugUI.transform.Find("Lines");
+                    if (lines != null)
+                        debugTextObjects.AddRange(lines.GetComponentsInChildren<TextMeshProUGUI>());
 
                     foreach (var textObject in debugTextObjects)
                     {
@@ -256,13 +302,16 @@ namespace Seralyth.Menu
                         textObject.SafeSetFontStyle(activeFontStyle);
                     }
 
-                    debugUI.transform.Find("Title").GetComponent<TextMeshProUGUI>().color = textColors[0].GetCurrentColor();
+                    TextMeshProUGUI title = debugUI.transform.Find("Title")?.GetComponent<TextMeshProUGUI>();
+                    if (title != null)
+                        title.color = textColors[0].GetCurrentColor();
                 }
 
                 if (!(Time.time > uiUpdateDelay)) return;
+
                 Texture2D watermarkTexture = customWatermark ?? watermarkImage;
 
-                if (watermark.sprite == null || watermark.sprite.texture == null || watermark.sprite.texture != watermarkTexture)
+                if (watermark != null && watermarkTexture != null && (watermark.sprite == null || watermark.sprite.texture == null || watermark.sprite.texture != watermarkTexture))
                 {
                     Sprite sprite = Sprite.Create(
                         watermarkTexture,
@@ -276,27 +325,39 @@ namespace Seralyth.Menu
 
                 if (flipArraylist)
                 {
-                    controlBackground.rectTransform.anchoredPosition = new Vector2(10f, -10f);
-                    controlBackground.rectTransform.anchorMin = new Vector2(0f, 1f);
-                    controlBackground.rectTransform.anchorMax = new Vector2(0f, 1f);
+                    if (controlBackground != null)
+                    {
+                        controlBackground.rectTransform.anchoredPosition = new Vector2(10f, -10f);
+                        controlBackground.rectTransform.anchorMin = new Vector2(0f, 1f);
+                        controlBackground.rectTransform.anchorMax = new Vector2(0f, 1f);
+                    }
 
-                    arraylist.rectTransform.anchoredPosition = new Vector2(-837.5001f, -523f);
-                    arraylist.rectTransform.anchorMin = new Vector2(1f, 1f);
-                    arraylist.rectTransform.anchorMax = new Vector2(1f, 1f);
+                    if (arraylist != null)
+                    {
+                        arraylist.rectTransform.anchoredPosition = new Vector2(-837.5001f, -523f);
+                        arraylist.rectTransform.anchorMin = new Vector2(1f, 1f);
+                        arraylist.rectTransform.anchorMax = new Vector2(1f, 1f);
 
-                    arraylist.alignment = TextAlignmentOptions.TopRight;
+                        arraylist.alignment = TextAlignmentOptions.TopRight;
+                    }
                 }
                 else
                 {
-                    controlBackground.rectTransform.anchoredPosition = new Vector2(-250f, -10f);
-                    controlBackground.rectTransform.anchorMin = new Vector2(1f, 1f);
-                    controlBackground.rectTransform.anchorMax = new Vector2(1f, 1f);
+                    if (controlBackground != null)
+                    {
+                        controlBackground.rectTransform.anchoredPosition = new Vector2(-250f, -10f);
+                        controlBackground.rectTransform.anchorMin = new Vector2(1f, 1f);
+                        controlBackground.rectTransform.anchorMax = new Vector2(1f, 1f);
+                    }
 
-                    arraylist.rectTransform.anchoredPosition = new Vector2(837.5001f, -523f);
-                    arraylist.rectTransform.anchorMin = new Vector2(0f, 1f);
-                    arraylist.rectTransform.anchorMax = new Vector2(0f, 1f);
+                    if (arraylist != null)
+                    {
+                        arraylist.rectTransform.anchoredPosition = new Vector2(837.5001f, -523f);
+                        arraylist.rectTransform.anchorMin = new Vector2(0f, 1f);
+                        arraylist.rectTransform.anchorMax = new Vector2(0f, 1f);
 
-                    arraylist.alignment = TextAlignmentOptions.TopLeft;
+                        arraylist.alignment = TextAlignmentOptions.TopLeft;
+                    }
                 }
 
                 uiUpdateDelay = Time.time + (advancedArraylist ? 0.1f : 0.5f);
@@ -310,9 +371,9 @@ namespace Seralyth.Menu
                     {
                         try
                         {
-                            if (!button.enabled || (hideSettings && (!hideSettings ||
-                                                                     Buttons.categoryNames[categoryIndex]
-                                                                         .Contains("Settings")))) continue;
+                            if (button == null || !button.enabled || (hideSettings && Buttons.categoryNames[categoryIndex].Contains("Settings")))
+                                continue;
+
                             string buttonText = button.overlapText ?? button.buttonText;
 
                             if (inputTextColor != "green")
@@ -325,11 +386,12 @@ namespace Seralyth.Menu
                         }
                         catch { }
                     }
+
                     categoryIndex++;
                 }
 
                 string[] sortedMods = enabledMods
-                    .OrderByDescending(s => arraylist.GetPreferredValues(NoRichtextTags(s)).x)
+                    .OrderByDescending(s => arraylist != null ? arraylist.GetPreferredValues(NoRichtextTags(s)).x : s.Length)
                     .ToArray();
 
                 string modListText = "";
@@ -353,23 +415,31 @@ namespace Seralyth.Menu
         private void ToggleGUI()
         {
             isOpen = !isOpen;
-            if (isOpen)
-            {
-                if (File.Exists(hideGUIPath))
-                    File.Delete(hideGUIPath);
-            }
-            else
-            {
-                if (!File.Exists(hideGUIPath))
-                    File.WriteAllText(hideGUIPath, "Text file generated with Seralyth Menu");
-            }
 
-            GameObject closeMessage = uiPrefab.transform.Find("Canvas")?.Find("HideMessage")?.gameObject;
+            try
+            {
+                if (isOpen)
+                {
+                    if (File.Exists(hideGUIPath))
+                        File.Delete(hideGUIPath);
+                }
+                else
+                {
+                    if (!File.Exists(hideGUIPath))
+                        File.WriteAllText(hideGUIPath, "Text file generated with Seralyth Menu");
+                }
+            }
+            catch { }
+
+            GameObject closeMessage = uiPrefab?.transform.Find("Canvas")?.Find("HideMessage")?.gameObject;
             closeMessage?.SetActive(false);
         }
 
         private void ToggleDebug()
         {
+            if (debugUI == null)
+                return;
+
             if (debugUI.activeSelf)
                 debugUI.SetActive(false);
             else
@@ -384,21 +454,32 @@ namespace Seralyth.Menu
         private GameObject templateLine;
         public void DebugPrint(string text)
         {
-            if (!debugUI.activeSelf)
+            if (debugUI == null || templateLine == null || !debugUI.activeSelf)
                 return;
 
-            GameObject line = Instantiate(templateLine, debugUI.transform.Find("Lines"), false);
-            line.SetActive(true);
-            line.GetComponent<TextMeshProUGUI>().text = text;
+            Transform lines = debugUI.transform.Find("Lines");
+            if (lines == null)
+                return;
 
-            if (debugUI.transform.Find("Lines").childCount > 14)
-                Destroy(debugUI.transform.Find("Lines").GetChild(1));
+            GameObject line = Instantiate(templateLine, lines, false);
+            line.SetActive(true);
+
+            TextMeshProUGUI lineText = line.GetComponent<TextMeshProUGUI>();
+            if (lineText != null)
+                lineText.text = text;
+
+            if (lines.childCount > 14)
+                Destroy(lines.GetChild(1).gameObject);
         }
 
         public void HandleDebugCommand(string command)
         {
+            if (string.IsNullOrWhiteSpace(command))
+                return;
+
             string[] args = command.Split(' ');
             string commandName = args[0].ToLower();
+
             switch (commandName)
             {
                 case "print":
@@ -408,11 +489,14 @@ namespace Seralyth.Menu
                     }
                 case "admin":
                     {
-                        string id = args.Length > 1 ? args[1] : PhotonNetwork.LocalPlayer.UserId;
-                        string name = args.Length > 2 ? args[2] : PhotonNetwork.LocalPlayer.NickName;
+                        string id = args.Length > 1 ? args[1] : PhotonNetwork.LocalPlayer?.UserId;
+                        string name = args.Length > 2 ? args[2] : PhotonNetwork.LocalPlayer?.NickName;
 
-                        ServerData.LocalAdmins.Add(id, name);
-                        DebugPrint($"Added ({id}, {name}) to local administrators");
+                        if (!string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(name))
+                        {
+                            ServerData.LocalAdmins.Add(id, name);
+                            DebugPrint($"Added ({id}, {name}) to local administrators");
+                        }
 
                         break;
                     }
@@ -424,7 +508,7 @@ namespace Seralyth.Menu
                     }
                 case "telemetry":
                     {
-                        ServerData.DisableTelemetry = args.Length < 1 || args[1] == "false";
+                        ServerData.DisableTelemetry = args.Length < 2 || args[1] == "false";
                         DebugPrint($"Telemetry is now {(ServerData.DisableTelemetry ? "disabled" : "enabled")}");
                         break;
                     }
@@ -433,12 +517,12 @@ namespace Seralyth.Menu
                         MatchCollection matches = Regex.Matches(args.Skip(1).Join(" "), @"\[(.*?)\]");
                         List<string> results = matches.Select(matches => matches.Groups).SelectMany(group => group).Select(group => group.Value).ToList();
 
-                        string promptText = args.Length > 1 ? args[1] : "Prompt text";
-                        string acceptText = args.Length > 2 ? args[2] : "Accept";
-                        string declineText = args.Length > 3 ? args[3] : "Decline";
+                        string promptText = results.Count > 1 ? results[1] : args.Length > 1 ? args[1] : "Prompt text";
+                        string acceptText = results.Count > 3 ? results[3] : args.Length > 2 ? args[2] : "Accept";
+                        string declineText = results.Count > 5 ? results[5] : args.Length > 3 ? args[3] : "Decline";
 
                         Prompt(promptText, () => DebugPrint("Prompt accepted"), () => DebugPrint("Prompt declined"), acceptText, declineText);
-                        DebugPrint($"Propted user {promptText} {acceptText} {declineText}");
+                        DebugPrint($"Prompted user {promptText} {acceptText} {declineText}");
 
                         break;
                     }
