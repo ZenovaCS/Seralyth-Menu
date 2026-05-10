@@ -65,7 +65,7 @@ namespace Seralyth.Utilities
         public static AudioType GetAudioType(string extension)
         {
             if (string.IsNullOrEmpty(extension))
-                return AudioType.WAV;
+                return AudioType.MPEG;
 
             return extension.ToLowerInvariant() switch
             {
@@ -73,7 +73,7 @@ namespace Seralyth.Utilities
                 "wav" => AudioType.WAV,
                 "ogg" => AudioType.OGGVORBIS,
                 "aiff" => AudioType.AIFF,
-                _ => AudioType.WAV,
+                _ => AudioType.MPEG,
             };
         }
 
