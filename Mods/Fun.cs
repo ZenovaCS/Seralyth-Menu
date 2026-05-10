@@ -1399,6 +1399,7 @@ namespace Seralyth.Mods
         private static float lastTimeDingied;
         public static void QuestNoises()
         {
+            if (!PhotonNetwork.InRoom) return;
             if (rightTrigger > 0.5f && Time.time > lastTimeDingied)
             {
                 lastTimeDingied = Time.time + VRRig.LocalRig.fxSettings.GetDelay(10);
@@ -1430,6 +1431,7 @@ namespace Seralyth.Mods
         private static bool returnOrTeleport;
         public static void ArcadeTeleporterEffectSpam()
         {
+            if (!PhotonNetwork.InRoom) return;
             if (Time.time > spamDelay)
             {
                 spamDelay = Time.time + 0.1f;
@@ -1442,6 +1444,7 @@ namespace Seralyth.Mods
 
         public static void StumpTeleporterEffectSpam()
         {
+            if (!PhotonNetwork.InRoom) return;
             if (Time.time > spamDelay)
             {
                 spamDelay = Time.time + 0.1f;
@@ -1454,9 +1457,10 @@ namespace Seralyth.Mods
 
         public static void SetBasementDoorState(bool open)
         {
+            if (!PhotonNetwork.InRoom) return;
             if (Time.time > spamDelay)
             {
-                delay = Time.time + 0.1f;
+                spamDelay = Time.time + 0.1f;
 
                 GetObject("Environment Objects/LocalObjects_Prefab/CityToBasement/DungeonEntrance/DungeonDoor_Prefab").GetComponent<PhotonView>().RPC("ChangeDoorState", RpcTarget.AllViaServer, open ? GTDoor.DoorState.Opening : GTDoor.DoorState.Closing);
                 RPCProtection();
@@ -1465,9 +1469,10 @@ namespace Seralyth.Mods
 
         public static void SetElevatorDoorState(bool open)
         {
+            if (!PhotonNetwork.InRoom) return;
             if (Time.time > spamDelay)
             {
-                delay = Time.time + 0.1f;
+                spamDelay = Time.time + 0.1f;
 
                 GRElevatorManager.ElevatorButtonPressed(open ? GRElevator.ButtonType.Open : GRElevator.ButtonType.Close, GRElevatorManager._instance.currentLocation);
                 RPCProtection();
@@ -1477,12 +1482,15 @@ namespace Seralyth.Mods
         private static bool openOrClose;
         public static void BasementDoorSpam()
         {
+            if (!PhotonNetwork.InRoom) return;
             if (Time.time > spamDelay)
             {
-                delay = Time.time + 0.1f;
+                spamDelay = Time.time + 0.05f;                      
                 openOrClose = !openOrClose;
+                PhotonView view = GetObject("Environment Objects/LocalObjects_Prefab/CityToBasement/DungeonEntrance/DungeonDoor_Prefab").GetComponent<PhotonView>();
 
-                GetObject("Environment Objects/LocalObjects_Prefab/CityToBasement/DungeonEntrance/DungeonDoor_Prefab").GetComponent<PhotonView>().RPC("ChangeDoorState", RpcTarget.AllViaServer, openOrClose ? GTDoor.DoorState.Opening : GTDoor.DoorState.Closing);
+                view.RPC("ChangeDoorState", RpcTarget.AllViaServer, openOrClose ? GTDoor.DoorState.Opening : GTDoor.DoorState.Closing);
+                view.RPC("ChangeDoorState", RpcTarget.AllViaServer, GTDoor.DoorState.HeldOpen);
                 RPCProtection();
             }
         }
