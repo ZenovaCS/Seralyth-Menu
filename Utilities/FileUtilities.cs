@@ -30,15 +30,23 @@ namespace Seralyth.Utilities
     {
         public static string GetFileExtension(string fileName)
         {
+            if (string.IsNullOrEmpty(fileName))
+                return string.Empty;
+
             var cleanName = fileName.Split('?')[0];
-            return Path.GetExtension(cleanName).TrimStart('.').ToLower();
+            return Path.GetExtension(cleanName).TrimStart('.').ToLowerInvariant();
         }
 
         public static string RemoveLastDirectory(string directory) =>
-            directory == "" || directory.LastIndexOf('/') <= 0 ? "" : directory[..directory.LastIndexOf('/')];
+            string.IsNullOrEmpty(directory) || directory.LastIndexOf('/') <= 0
+                ? string.Empty
+                : directory[..directory.LastIndexOf('/')];
 
         public static string RemoveFileExtension(string file)
         {
+            if (string.IsNullOrEmpty(file))
+                return string.Empty;
+
             int index = 0;
             string output = "";
             string[] split = file.Split(".");
@@ -56,18 +64,24 @@ namespace Seralyth.Utilities
 
         public static AudioType GetAudioType(string extension)
         {
-            return extension.ToLower() switch
+            if (string.IsNullOrEmpty(extension))
+                return AudioType.MPEG;
+
+            return extension.ToLowerInvariant() switch
             {
                 "mp3" => AudioType.MPEG,
                 "wav" => AudioType.WAV,
                 "ogg" => AudioType.OGGVORBIS,
                 "aiff" => AudioType.AIFF,
-                _ => AudioType.WAV,
+                _ => AudioType.MPEG,
             };
         }
 
         public static string GetFullPath(Transform transform)
         {
+            if (transform == null)
+                return string.Empty;
+
             string path = "";
             while (transform.parent != null)
             {
@@ -82,6 +96,9 @@ namespace Seralyth.Utilities
 
         public static string SanitizeFileName(string input)
         {
+            if (string.IsNullOrWhiteSpace(input))
+                return "file";
+
             input = input.Trim();
             char[] illegalChars = Path.GetInvalidFileNameChars();
             input = illegalChars.Aggregate(input, (current, c) => current.Replace(c, '_'));
@@ -99,7 +116,7 @@ namespace Seralyth.Utilities
                 input = input[..64];
 
             if (string.IsNullOrWhiteSpace(input))
-                input = "file"; // fallback
+                input = "file";
 
             return input;
         }
