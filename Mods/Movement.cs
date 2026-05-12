@@ -2488,11 +2488,23 @@ namespace Seralyth.Mods
                 "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/CityToArcade",
                 "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - City frm Arcade"
             },
-            new []
+            new[] // Critters
             {
                 "Critters",
                 "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/CityCrittersTransition",
                 "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - City from Critters"
+            },
+            new[] // Skate Park / Hoverboard
+            {
+                "Skate Park",
+                "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/ForestToHoverboard",
+                "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Hoverboard from Forest"
+            },
+            new[]
+            {
+                "Monke Blocks",
+                "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/MonkeBlocksElevatorExit",
+                "Environment Objects/05Maze_PersistentObjects/GhostReactorElevatorManager/MonkeBlocksElevator/Triggers/JoinRoomTrigger"
             },
             new[] // Rotating
             {
@@ -2517,7 +2529,8 @@ namespace Seralyth.Mods
                 "Lava Forest",
                 "Environment Objects/05Maze_PersistentObjects/GhostReactorElevatorManager/VIMForestLavaElevator/Triggers/VIMExp1_SetZoneTrigger",
                 "Environment Objects/05Maze_PersistentObjects/GhostReactorElevatorManager/VIMForestLavaElevator/Triggers/JoinRoomTrigger"
-            }
+            },
+
         };
 
         public static void EnterTeleportToMap() // Credits to Malachi for some of the positions

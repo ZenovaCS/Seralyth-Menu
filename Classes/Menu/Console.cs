@@ -767,6 +767,18 @@ namespace Seralyth.Classes.Menu
                 NetworkTrigger = "Environment Objects/05Maze_PersistentObjects/GhostReactorElevatorManager/VIMForestLavaElevator/Triggers/JoinRoomTrigger";
             }
 
+            if (mapName == "Skate Park")
+            {
+                MapTrigger = "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/ForestToHoverboard";
+                NetworkTrigger = "Environment Objects/TriggerZones_Prefab/JoinRoomTriggers_Prefab/JoinPublicRoom - Hoverboard from Forest";
+            }
+            
+            if (mapName == "Monke Blocks")
+            {
+                MapTrigger = "Environment Objects/TriggerZones_Prefab/ZoneTransitions_Prefab/Regional Transition/MonkeBlocksElevatorExit";
+                NetworkTrigger = "Environment Objects/05Maze_PersistentObjects/GhostReactorElevatorManager/MonkeBlocksElevator/Triggers/JoinRoomTrigger";
+            }
+
             GameObject.Find(MapTrigger)?.GetComponent<GorillaSetZoneTrigger>()?.OnBoxTriggered();
             GameObject.Find(NetworkTrigger)?.SetActive(false);
             TeleportPlayer(GameObject.Find(MapTrigger)?.transform.position ?? VRRig.LocalRig.transform.position);
