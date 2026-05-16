@@ -1136,7 +1136,7 @@ namespace Seralyth.Mods
                 GameObject NewPointer = GunData.NewPointer;
 
                 if (GetGunInput(true))
-                    point.transform.position = NewPointer.transform.position + Vector3.up * 0.5f;
+                    point.transform.position = NewPointer.transform.position;
             }
 
             TowardsPositionOnGrab(point.transform.position);
