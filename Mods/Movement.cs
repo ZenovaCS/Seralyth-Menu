@@ -3732,11 +3732,26 @@ namespace Seralyth.Mods
         public static void Rotate(Quaternion rot) =>
             VRRig.LocalRig.transform.rotation = rot;
 
-        public static void VRRigLateUpdate_Dinnerbone() =>
+        public static bool NotifyFBTLimitation;
+        public static void VRRigLateUpdate_Dinnerbone()
+        {
+            if (!NotifyFBTLimitation)
+            {
+                PromptSingle("Since Gorilla Tag still hasn't made Full Body Tracking free, this will only work best in the Monke Blocks map.");
+                NotifyFBTLimitation = true;
+            }
             VRRig.LocalRig.transform.rotation = Quaternion.Euler(Camera.main.transform.eulerAngles.x, Camera.main.transform.eulerAngles.y, 180f);
+        }
 
-        public static void VRRigLateUpdate_SpazBody() =>
+        public static void VRRigLateUpdate_SpazBody()
+        {
+            if (!NotifyFBTLimitation)
+            {
+                PromptSingle("Since Gorilla Tag still hasn't made Full Body Tracking free, this will only work best in the Monke Blocks map.");
+                NotifyFBTLimitation = true;
+            }
             VRRig.LocalRig.transform.rotation = Random.rotationUniform;
+        }
 
         public static void DisableSizeChanger()
         {
