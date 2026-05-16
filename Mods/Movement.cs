@@ -3733,10 +3733,10 @@ namespace Seralyth.Mods
             VRRig.LocalRig.transform.rotation = rot;
 
         public static void VRRigLateUpdate_Dinnerbone() =>
-            VRRig.LocalRig.transform.rotation = Quaternion.Euler(Camera.main.transform.eulerAngles.x, Camera.main.transform.eulerAngles.y, 180f);
+            VRRig.LocalRig.transform.RotateAround(VRRig.LocalRig.bodyTransform.position, Camera.main.transform.forward, 180f);
 
-        public static void VRRigLateUpdate_SpazBody() =>
-            VRRig.LocalRig.transform.rotation = Random.rotationUniform;
+        public static void VRRigLateUpdate_SpazBody() => Rotate(Random.rotationUniform);
+            
 
         public static void DisableSizeChanger()
         {
