@@ -3063,7 +3063,7 @@ namespace Seralyth.Mods
                 VRRig.LocalRig.enabled = false;
 
                 VRRig.LocalRig.transform.position = GorillaTagger.Instance.rightHandTransform.position;
-                VRRig.LocalRig.transform.rotation = Quaternion.Euler(new Vector3(0f, GorillaTagger.Instance.rightHandTransform.rotation.eulerAngles.y, 0f));
+                VRRig.LocalRig.transform.rotation = GorillaTagger.Instance.rightHandTransform.rotation;
 
                 VRRig.LocalRig.head.rigTarget.transform.rotation = GorillaTagger.Instance.rightHandTransform.TransformRotation(grabHeadRot);
 
