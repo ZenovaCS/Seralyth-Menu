@@ -7484,14 +7484,19 @@ namespace Seralyth.Mods
         }
 
         private static float RopeDelay;
-        public static void JoystickRopeControl() // Thanks to ShibaGT for the fix
+        public static void JoystickRopeControl()
         {
-            if ((Mathf.Abs(rightJoystick.x) > 0.05f || Mathf.Abs(rightJoystick.y) > 0.05f) && Time.time > RopeDelay)
+            Vector2 r = rightJoystick;
+            Vector2 l = leftJoystick;
+
+            Vector2 stick = (l.sqrMagnitude > r.sqrMagnitude) ? l : r;
+
+            if (stick.sqrMagnitude > 0.0025f && Time.time > RopeDelay)
             {
                 RopeDelay = Time.time + 0.125f;
 
                 GorillaRopeSwing rope = GetRandomType<GorillaRopeSwing>(0.25f);
-                BetaSetRopeVelocity(rope, new Vector3(rightJoystick.x * 100f, rightJoystick.y * 100f, 0f));
+                BetaSetRopeVelocity(rope, new Vector3(stick.x * 100f, stick.y * 100f, 0f));
             }
         }
 

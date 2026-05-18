@@ -3700,6 +3700,37 @@ namespace Seralyth.Mods
 
         public static void VRRigLateUpdate_FakeFBT() => Rotate(Camera.main.transform.rotation);
 
+        private static Quaternion? vrrigJoystickRot;
+
+        public static void VRRigLateUpdate_Joystick()
+        {
+            if (rightJoystickClick || leftJoystickClick)
+                vrrigJoystickRot = null;
+
+            Vector2 r = rightJoystick;
+            Vector2 l = leftJoystick;
+            Vector2 stick = (l.sqrMagnitude > r.sqrMagnitude) ? l : r;
+
+            if (stick.sqrMagnitude > 0.0025)
+            {
+                if (!vrrigJoystickRot.HasValue)
+                    vrrigJoystickRot = VRRig.LocalRig.transform.rotation;
+                float yaw = stick.x * 200f * Time.deltaTime;
+                float pitch = -stick.y * 200f * Time.deltaTime;
+
+                Quaternion rot = vrrigJoystickRot.Value;
+
+                rot = Quaternion.AngleAxis(yaw, Vector3.up) * rot;
+                Vector3 localRight = rot * Vector3.right;
+                rot = Quaternion.AngleAxis(pitch, localRight) * rot;
+
+                rot.Normalize();
+                vrrigJoystickRot = rot;
+            }
+
+            if (vrrigJoystickRot != null)
+                VRRig.LocalRig.transform.rotation = vrrigJoystickRot.Value;
+        }
 
         public static void DisableSizeChanger()
         {
