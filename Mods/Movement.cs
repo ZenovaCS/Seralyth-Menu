@@ -3698,7 +3698,12 @@ namespace Seralyth.Mods
 
         public static void VRRigLateUpdate_SpazBody() => Rotate(Random.rotationUniform);
 
-        public static void VRRigLateUpdate_FakeFBT() => Rotate(Camera.main.transform.rotation);
+        public static void VRRigLateUpdate_FakeFBT() // Thanks to Lexi for the proper way to do this
+        {
+            Rotate(Camera.main.transform.rotation);
+            VRRig.LocalRig.leftHand.rigTarget.transform.position = GTPlayer.Instance.LeftHand.handFollower.transform.position;
+            VRRig.LocalRig.rightHand.rigTarget.transform.position = GTPlayer.Instance.RightHand.handFollower.transform.position;
+        } 
 
         private static Quaternion? vrrigJoystickRot;
 
