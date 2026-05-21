@@ -62,21 +62,6 @@ namespace Seralyth.Utilities
             return output;
         }
 
-        public static AudioType GetAudioType(string extension)
-        {
-            if (string.IsNullOrEmpty(extension))
-                return AudioType.UNKNOWN;
-
-            return extension.ToLowerInvariant() switch
-            {
-                "mp3" => AudioType.MPEG,
-                "wav" => AudioType.WAV,
-                "ogg" => AudioType.OGGVORBIS,
-                "aiff" => AudioType.AIFF,
-                _ => AudioType.UNKNOWN,
-            };
-        }
-
         public static string GetFullPath(Transform transform)
         {
             if (transform == null)
