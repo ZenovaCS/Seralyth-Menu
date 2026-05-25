@@ -4159,8 +4159,7 @@ namespace Seralyth.Menu
         /// <param name="DeclineButton">Decline Text</param>
         public static void Prompt(string Message, Action Accept = null, Action Decline = null, string AcceptButton = "Yes", string DeclineButton = "No")
         {
-            inTextInput = false;
-            isSearching = false;
+            Settings.DestroyKeyboard();
             keyboardInput = "";
             prompts.Add(new PromptData { Message = Message, AcceptAction = Accept, DeclineAction = Decline, AcceptText = AcceptButton, DeclineText = DeclineButton, IsText = false });
 
@@ -4183,8 +4182,7 @@ namespace Seralyth.Menu
 
         public static void PromptSingle(string Message, Action Accept = null, string AcceptButton = "Ok")
         {
-            inTextInput = false;
-            isSearching = false;
+            Settings.DestroyKeyboard();
             keyboardInput = "";
             prompts.Add(new PromptData { Message = Message, AcceptAction = Accept, DeclineAction = null, AcceptText = AcceptButton, DeclineText = null, IsText = false });
 
@@ -4208,8 +4206,7 @@ namespace Seralyth.Menu
         /// <param name="DeclineButton">Decline Text</param>
         public static void PromptText(string Message, Action Accept = null, Action Decline = null, string AcceptButton = "Yes", string DeclineButton = "No")
         {
-            inTextInput = false;
-            isSearching = false;
+            Settings.DestroyKeyboard();
             keyboardInput = "";
             prompts.Add(new PromptData { Message = Message, AcceptAction = Accept, DeclineAction = Decline, AcceptText = AcceptButton, DeclineText = DeclineButton, IsText = true });
 
@@ -4231,6 +4228,8 @@ namespace Seralyth.Menu
         /// <param name="AcceptButton">Accept Text</param>
         public static void PromptSingleText(string Message, Action Accept = null, string AcceptButton = "Ok")
         {
+            Settings.DestroyKeyboard();
+            keyboardInput = "";
             prompts.Add(new PromptData { Message = Message, AcceptAction = Accept, DeclineAction = null, AcceptText = AcceptButton, DeclineText = null, IsText = true });
 
             if (menu != null && prompts.Count <= 1)
