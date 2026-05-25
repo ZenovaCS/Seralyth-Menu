@@ -3024,7 +3024,7 @@ namespace Seralyth.Menu
                         renderButtons = renderButtons.AddToArray(
                             new ButtonInfo
                             {
-                                buttonText = "This category doesn't seem to have any buttons.",
+                                buttonText = "This category seems to be empty.",
                                 legal = true,
                                 label = true
                             }

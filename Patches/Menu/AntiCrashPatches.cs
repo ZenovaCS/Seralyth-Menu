@@ -24,6 +24,7 @@ using GorillaExtensions;
 using HarmonyLib;
 using Photon.Pun;
 using Photon.Realtime;
+using Seralyth.Extensions;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -83,7 +84,7 @@ namespace Seralyth.Patches.Menu
         {
             public static void Postfix(DeployedChild __instance, DeployableObject parent, Vector3 launchPos, Quaternion launchRot, Vector3 releaseVel, bool isRemote = false)
             {
-                if (enabled)
+                if (enabled && parent.m_VRRig.GetPlayer() != NetworkSystem.Instance.LocalPlayer)
                     __instance._rigidbody.linearVelocity = __instance._rigidbody.linearVelocity.ClampMagnitudeSafe(100f);
             }
         }

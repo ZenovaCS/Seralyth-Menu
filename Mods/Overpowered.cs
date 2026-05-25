@@ -5875,7 +5875,7 @@ namespace Seralyth.Mods
         }
 
         private static float barrelAllDelay;
-        public static void BarrelFlingGun()//fixed by cha yayayayay
+        public static void BarrelFlingGun() //fixed by cha yayayayay
         {
             if (GetGunInput(false))
             {
@@ -6069,7 +6069,11 @@ namespace Seralyth.Mods
                     BitPackUtils.PackWorldPosForNetwork(vel)
                 };
 
-                PhotonNetwork.RaiseEvent(177, data, options, SendOptions.SendReliable);
+                PhotonNetwork.RaiseEvent(177, data, options, new SendOptions
+                {
+                    Reliability = false,
+                    DeliveryMode = DeliveryMode.ReliableUnsequenced
+                });
                 barrel._child.Deploy(barrel, pos, rot, vel, false);
                 barrel.DeployChild();
 
