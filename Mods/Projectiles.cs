@@ -353,7 +353,7 @@ namespace Seralyth.Mods
                                 LaunchLocalProjectile(position, velocity, projectileSource, index, true, color32, friendSided ? friendProjectileScale : 1, Throwable.ProjectileHash, VRRig.LocalRig);
                             if (!clientSided && NetworkSystem.Instance.InRoom)
                             {
-                                PhotonNetwork.RaiseEvent(friendSided ? FriendManager.FriendByte : (byte)3, sendEventData.ToArray(), options, SendOptions.SendReliable);
+                                PhotonNetwork.RaiseEvent(friendSided ? FriendManager.FriendByte : (byte)Constants.Network.ROOM_SYSTEM, sendEventData.ToArray(), options, SendOptions.SendReliable);
                                 RPCProtection();
                             }
                         }
@@ -381,7 +381,7 @@ namespace Seralyth.Mods
                 sendEventData[0] = PhotonNetwork.ServerTimestamp;
                 sendEventData[1] = (byte)1;
                 sendEventData[2] = impactSendData;
-                PhotonNetwork.RaiseEvent(3, sendEventData, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendUnreliable);
+                PhotonNetwork.RaiseEvent((byte)Constants.Network.ROOM_SYSTEM, sendEventData, new RaiseEventOptions { Receivers = ReceiverGroup.All }, SendOptions.SendUnreliable);
 
                 if (projDebounceType > 0f)
                     projDebounce = Time.time + 0.1f;
